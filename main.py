@@ -36,7 +36,7 @@ class TarotCardPlugin(BasePlugin):
             
 
     def get_image_path(self, random_number):
-        return Path(f"plugins/QChatGPT_BlueArchive_tarot/image/{random_number}.png")
+        return Path(f"plugins/QChatGPT_BlueArchive_tarot/image/{random_number}.jpg")
 
     def __del__(self):
         pass
