@@ -1,38 +1,40 @@
-import os
-import re
 import random
-from pkg.plugin.models import *
-from pkg.plugin.host import EventContext, PluginHost
-from mirai import Image, Plain
+from pathlib import Path
+from pkg.plugin.context import register, handler, BasePlugin, APIHost, EventContext
+from pkg.plugin.events import PersonNormalMessageReceived, GroupNormalMessageReceived
+from mirai import MessageChain, Plain, Image, AtAll
 
+# 注册插件
 @register(name="QChatGPT_BlueArchive_tarot", description="BlueArchive塔罗牌消息", version="1.0", author="TwperBody")
-class TarotCardPlugin(Plugin):
+class TarotCardPlugin(BasePlugin):
 
-    def __init__(self, plugin_host: PluginHost):
-        super().__init__(plugin_host)
-        # 设置本地图片文件夹路径
-        self.image_folder = "plugins/QChatGPT_BlueArchive_tarot/image"
+    def __init__(self, host: APIHost):
+        self.host = host
 
-    @on(NormalMessageResponded)
-    def add_tarot_card(self, event: EventContext, **kwargs):
-        original_message = kwargs['response_text']
-        if "卡罗牌" in original_message:
-            optimized_message = self.add_tarot_card_to_message()
-            event.add_return('reply', optimized_message)
-        else:
-            event.add_return('reply', original_message)
+    async def initialize(self):
+        pass
 
-    def add_tarot_card_to_message(self):
-        # 生成一个0-21的随机数
-        random_number = random.randint(0, 21)
-        # 确保编号为两位数，如01, 02, ..., 21
-        formatted_number = f"{random_number:02d}"
-        image_name = f"{formatted_number}.png"  # 假设图片文件名格式为 card_00.png, card_01.png, ...
-        image_path = os.path.join(self.image_folder, image_name)
-        if os.path.exists(image_path):
-            return [Plain("老师，这是你今天的卡罗牌："), Image(path=image_path)]
-        else:
-            return [Plain("老师，这是你今天的卡罗牌："), Plain("图片未找到。")]
+    @handler(PersonNormalMessageReceived)
+    async def person_normal_message_received(self, ctx: EventContext):
+        self.handle_tarot_card(ctx)
+
+    @handler(GroupNormalMessageReceived)
+    async def group_normal_message_received(self, ctx: EventContext):
+        self.handle_tarot_card(ctx)
+
+    def handle_tarot_card(self, ctx: EventContext):
+        msg = ctx.event.text_message
+        if  "卡罗牌" in msg:
+            random_number = random.randint(0, 21)
+            image_path = self.get_image_path(random_number)
+            message_chain = MessageChain([
+                Plain("老师，这是你今天的卡罗牌"),
+                Image(path=str(image_path))
+            ])
+            ctx.add_return("reply", message_chain)
+
+    def get_image_path(self, random_number):
+        return Path(f"plugins/QChatGPT_BlueArchive_tarot/image/{random_number}.jpg")
 
     def __del__(self):
         pass
