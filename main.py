@@ -24,11 +24,11 @@ class TarotCardPlugin(BasePlugin):
 
     def handle_tarot_card(self, ctx: EventContext):
         msg = ctx.event.text_message
-        if  "卡罗牌" in msg:
+        if  "塔罗牌" in msg:
             random_number = random.randint(0, 21)
             image_path = self.get_image_path(random_number)
             message_chain = MessageChain([
-                Plain("老师，这是你今天的卡罗牌"),
+                Plain("老师，这是你今天的塔罗牌"),
                 Image(path=str(image_path))
             ])
             ctx.add_return("reply", message_chain)
