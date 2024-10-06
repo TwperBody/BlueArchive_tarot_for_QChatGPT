@@ -2,7 +2,7 @@ import random
 from pathlib import Path
 from pkg.plugin.context import register, handler, BasePlugin, APIHost, EventContext
 from pkg.plugin.events import PersonNormalMessageReceived, GroupNormalMessageReceived
-from mirai import MessageChain, Plain, Image, AtAll
+from mirai import MessageChain, Plain, Image
 
 # 注册插件
 @register(name="QChatGPT_BlueArchive_tarot", description="BlueArchive塔罗牌消息", version="1.0", author="TwperBody")
@@ -28,10 +28,10 @@ class TarotCardPlugin(BasePlugin):
             random_number = random.randint(0, 21)
             image_path = self.get_image_path(random_number)
             message_chain = MessageChain([
-                Plain("老师，这是你今天的塔罗牌"),
+                Plain("老师，这是你今天的卡罗牌："),
                 Image(path=str(image_path))
             ])
-            ctx.add_return("reply", message_chain)
+            await ctx.api.send_message_chain(ctx.event.group_id if hasattr(ctx.event, 'group_id') else ctx.event.user_id, message_chain)
             ctx.prevent_default()
             
 
