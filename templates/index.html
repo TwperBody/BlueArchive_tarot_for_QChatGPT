@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图床</title>
+    <style>
+        body, html {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden;
+        }
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: auto;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            max-width: 1200px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        .btn {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #4cae4c;
+        }
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-gap: 10px;
+            margin-top: 20px;
+            padding: 10px;
+        }
+        .image-gallery img {
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        .image-gallery img:hover {
+            opacity: 1;
+        }
+        .image-info {
+            margin-top: 5px;
+            font-size: 0.8em;
+            color: #666;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: none;
+            background-color: #eee;
+            cursor: pointer;
+        }
+        .pagination button.active {
+            background-color: #5cb85c;
+            color: white;
+        }
+        .pagination button:hover {
+            background-color: #4cae4c;
+        }
+        #file-upload-btn {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <h1>图床</h1>
+        <form method="post" enctype="multipart/form-data" action="/upload">
+            <input type="file" name="photo" id="file-upload-btn" accept=".png">
+            <label for="file-upload-btn" class="btn">选择文件</label>
+            <input type="submit" value="上传图片" class="btn">
+        </form>
+        <div class="image-gallery" id="image-gallery">
+            <!-- Images will be added here by JavaScript -->
+        </div>
+        <div class="pagination" id="pagination">
+            <!-- Pagination buttons will be added here by JavaScript -->
+        </div>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const gallery = document.getElementById('image-gallery');
+            const pagination = document.getElementById('pagination');
+            const imagesPerPage = 7; // Number of images per page
+            const totalImages = 25; // Total number of images
+            let currentPage = 1; // Current page index
+
+            // Function to create image elements and add them to the gallery
+            const addImagesToGallery = (start, end) => {
+                gallery.innerHTML = ''; // Clear the gallery
+                for (let i = start; i < end; i++) {
+                    const img = document.createElement('img');
+                    img.src = `/uploads/${i+1}.png`;
+                    img.alt = `Image ${i+1}`;
+
+                    const div = document.createElement('div');
+                    div.className = 'image-container';
+                    div.appendChild(img);
+
+                    const info = document.createElement('div');
+                    info.className = 'image-info';
+                    info.textContent = `Uploaded URL: /uploads/${i+1}.png`;
+                    div.appendChild(info);
+
+                    gallery.appendChild(div);
+                }
+            };
+
+            // Function to create pagination buttons
+            const createPagination = (totalPages) => {
+                pagination.innerHTML = ''; // Clear existing pagination buttons
+                for (let i = 1; i <= totalPages; i++) {
+                    const button = document.createElement('button');
+                    button.textContent = i;
+                    button.disabled = i === currentPage;
+                    button.className = i === currentPage ? 'active' : '';
+                    button.onclick = () => changePage(i);
+                    pagination.appendChild(button);
+                }
+            };
+
+            // Function to change page
+            const changePage = (page) => {
+                if (page < 1 || page > Math.ceil(totalImages / imagesPerPage)) return;
+                currentPage = page;
+                const start = (currentPage - 1) * imagesPerPage;
+                const end = Math.min(start + imagesPerPage, totalImages);
+                addImagesToGallery(start, end);
+            };
+
+            // Initialize gallery and pagination
+            addImagesToGallery(0, Math.min(imagesPerPage, totalImages));
+            createPagination(Math.ceil(totalImages / imagesPerPage));
+        });
+    </script>
+</body>
+</html>
