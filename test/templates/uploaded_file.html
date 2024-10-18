@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Uploaded File</title>
+</head>
+<body>
+    <h1>Uploaded File: {{ filename }}</h1>
+    <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Uploaded Image">
+</body>
+</html>

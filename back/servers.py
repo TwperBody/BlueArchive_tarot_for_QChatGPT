@@ -1,8 +1,5 @@
-# servers.py
-
 from flask import Flask, request, redirect, url_for, render_template, send_from_directory
 import os
-import threading
 
 app = Flask(__name__)
 
@@ -22,12 +19,13 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    global file_counter
+    global file_counter  # 使用全局变量
     file = request.files['photo']
     if file:
+        # 生成数字文件名，例如：0.png, 1.png, ....
         new_filename = str(file_counter) + '.png'
         file.save(os.path.join(app.config['UPLOADED_PHOTOS_DEST'], new_filename))
-        file_counter += 1
+        file_counter += 1  # 每次上传文件后递增编号
         return redirect(url_for('uploaded_file', filename=new_filename))
     return 'File upload failed'
 
@@ -35,9 +33,5 @@ def upload():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'], filename)
 
-def run_server():
-    app.run(host='0.0.0.0', port=1145, debug=True, use_reloader=False)
-
 if __name__ == '__main__':
-    server_thread = threading.Thread(target=run_server)
-    server_thread.start()
+    app.run(host='0.0.0.0', port=1145, debug=True)  # 运行在端口1145
