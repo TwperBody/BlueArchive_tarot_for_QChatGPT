@@ -4,7 +4,7 @@ import os
 app = Flask(__name__)
 
 # 设置图片存储路径
-app.config['UPLOADED_PHOTOS_DEST'] = 'image'
+app.config['UPLOADED_PHOTOS_DEST'] = 'plugins/QChatGPT_BlueArchive_tarot/image'
 
 # 确保上传目录存在
 if not os.path.exists(app.config['UPLOADED_PHOTOS_DEST']):
@@ -15,7 +15,7 @@ file_counter = 0
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('plugins/QChatGPT_BlueArchive_tarot/templates/index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
