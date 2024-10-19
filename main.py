@@ -1,12 +1,10 @@
-# main.py
-
 import random
 from pathlib import Path
 from pkg.plugin.context import register, handler, BasePlugin, APIHost, EventContext
 from pkg.plugin.events import PersonNormalMessageReceived, GroupNormalMessageReceived
 from mirai import MessageChain, Plain, Image
 import threading
-from . import servers  # 导入servers模块
+from servers import run_server  # 导入servers模块的run_server函数
 
 # 注册插件
 @register(name="QChatGPT_BlueArchive_tarot", description="BlueArchive塔罗牌消息", version="1.0", author="TwperBody")
@@ -19,7 +17,8 @@ class TarotCardPlugin(BasePlugin):
         self.image_dir.mkdir(parents=True, exist_ok=True)
 
     async def initialize(self):
-        pass
+        print("Initializing TarotCardPlugin")
+        # 你可以在这里添加更多的初始化代码
 
     @handler(PersonNormalMessageReceived)
     async def person_normal_message_received(self, ctx: EventContext):
@@ -45,14 +44,16 @@ class TarotCardPlugin(BasePlugin):
         # 返回网络上的图片 URL
         return f"http://127.0.0.1:1145/uploads/{random_number:02}.png"
 
-def __del__(self):
-    pass
+    def __del__(self):
+        pass
 
 if __name__ == '__main__':
     # 启动服务器线程
-    server_thread = threading.Thread(target=servers.run_server)
+    server_thread = threading.Thread(target=run_server)
     server_thread.daemon = True  # 设置为守护线程
     server_thread.start()
-
-    # 这里可以继续您的主程序逻辑
     print("Server is running at http://localhost:1145")
+
+    # 主程序继续执行其他任务
+    print("Main program is running...")
+    # 在这里添加主程序的其他逻辑
