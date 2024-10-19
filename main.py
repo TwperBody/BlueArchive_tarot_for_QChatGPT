@@ -50,7 +50,7 @@ class TarotCardPlugin(BasePlugin):
 if __name__ == '__main__':
     # 启动服务器线程
     server_thread = threading.Thread(target=run_server)
-    server_thread.daemon = True  # 设置为守护线程
+    server_thread.daemon = False  # 设置为守护线程
     server_thread.start()
     print("Server is running at http://localhost:1145")
 
