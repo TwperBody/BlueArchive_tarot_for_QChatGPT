@@ -42,7 +42,7 @@ class TarotCardPlugin(BasePlugin):
 
     def get_image_url(self, random_number):
         # 返回网络上的图片 URL
-        return f"http://127.0.0.1:8080/uploads/{random_number:02}.png"
+        return f"http://127.0.0.1:8080/uploads/{random_number}.png"
 
     def __del__(self):
         pass
