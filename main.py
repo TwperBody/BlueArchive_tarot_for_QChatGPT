@@ -4,7 +4,7 @@ from pkg.plugin.context import register, handler, BasePlugin, APIHost, EventCont
 from pkg.plugin.events import PersonNormalMessageReceived, GroupNormalMessageReceived
 from mirai import MessageChain, Plain, Image
 import threading
-from servers import run_server  # 导入servers模块的run_server函数
+from .servers import run_server  # 导入servers模块的run_server函数
 
 # 注册插件
 @register(name="QChatGPT_BlueArchive_tarot", description="BlueArchive塔罗牌消息", version="1.0", author="TwperBody")
