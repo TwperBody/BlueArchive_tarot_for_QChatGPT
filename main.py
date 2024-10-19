@@ -1,43 +1,58 @@
-# servers.py
+# main.py
 
-from flask import Flask, request, redirect, url_for, render_template, send_from_directory
-import os
+import random
+from pathlib import Path
+from pkg.plugin.context import register, handler, BasePlugin, APIHost, EventContext
+from pkg.plugin.events import PersonNormalMessageReceived, GroupNormalMessageReceived
+from mirai import MessageChain, Plain, Image
 import threading
+import servers  # 导入servers模块
 
-app = Flask(__name__)
+# 注册插件
+@register(name="QChatGPT_BlueArchive_tarot", description="BlueArchive塔罗牌消息", version="1.0", author="TwperBody")
+class TarotCardPlugin(BasePlugin):
 
-# 设置图片存储路径
-app.config['UPLOADED_PHOTOS_DEST'] = 'image'
+    def __init__(self, host: APIHost):
+        self.host = host
+        # 确保图片存储目录存在
+        self.image_dir = Path("plugins/QChatGPT_BlueArchive_tarot")
+        self.image_dir.mkdir(parents=True, exist_ok=True)
 
-# 确保上传目录存在
-if not os.path.exists(app.config['UPLOADED_PHOTOS_DEST']):
-    os.makedirs(app.config['UPLOADED_PHOTOS_DEST'])
+    async def initialize(self):
+        pass
 
-# 初始化文件编号
-file_counter = 0
+    @handler(PersonNormalMessageReceived)
+    async def person_normal_message_received(self, ctx: EventContext):
+        await self.handle_tarot_card(ctx)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+    @handler(GroupNormalMessageReceived)
+    async def group_normal_message_received(self, ctx: EventContext):
+        await self.handle_tarot_card(ctx)
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    global file_counter
-    file = request.files['photo']
-    if file:
-        new_filename = str(file_counter) + '.png'
-        file.save(os.path.join(app.config['UPLOADED_PHOTOS_DEST'], new_filename))
-        file_counter += 1
-        return redirect(url_for('uploaded_file', filename=new_filename))
-    return 'File upload failed'
+    async def handle_tarot_card(self, ctx: EventContext):
+        msg = ctx.event.text_message
+        if msg in ("塔罗牌", "塔罗"):
+            random_number = random.randint(0, 21)
+            image_url = self.get_image_url(random_number)
+            message_chain = MessageChain([
+                Plain("老师，这是你今天的塔罗牌："),
+                Image(url=image_url)  
+            ])
+            await ctx.reply(message_chain)  
+            ctx.prevent_default()
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'], filename)
+    def get_image_url(self, random_number):
+        # 返回网络上的图片 URL
+        return f"http://127.0.0.1:1145/uploads/{random_number:02}.png"
 
-def run_server():
-    app.run(host='0.0.0.0', port=1145, debug=True, use_reloader=False)
+def __del__(self):
+    pass
 
 if __name__ == '__main__':
-    server_thread = threading.Thread(target=run_server)
+    # 启动服务器线程
+    server_thread = threading.Thread(target=servers.run_server)
+    server_thread.daemon = True  # 设置为守护线程
     server_thread.start()
+
+    # 这里可以继续您的主程序逻辑
+    print("Server is running at http://localhost:1145")
