@@ -43,7 +43,7 @@ def uploaded_file(filename):
 
 def run_server():
     try:
-        app.run(host='0.0.0.0', port=8080, debug=True)
+        app.run(host='0.0.0.0', port=8000, debug=True)
     except Exception as e:
         print(f"Error starting server: {e}")
 
