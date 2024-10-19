@@ -1,8 +1,5 @@
-# servers.py
-
 from flask import Flask, request, redirect, url_for, render_template, send_from_directory
 import os
-import threading
 
 app = Flask(__name__)
 
@@ -36,8 +33,7 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'], filename)
 
 def run_server():
-    app.run(host='0.0.0.0', port=1145, debug=True, use_reloader=False)
-
-if __name__ == '__main__':
-    server_thread = threading.Thread(target=run_server)
-    server_thread.start()
+    try:
+        app.run(host='0.0.0.0', port=1145, debug=True)
+    except Exception as e:
+        print(f"Error starting server: {e}")
