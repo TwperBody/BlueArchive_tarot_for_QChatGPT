@@ -15,7 +15,7 @@ file_counter = 0
 
 @app.route('/')
 def index():
-    return render_template('plugins/QChatGPT_BlueArchive_tarot/templates/index.html')
+    return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
