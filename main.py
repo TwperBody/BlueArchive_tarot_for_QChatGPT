@@ -42,7 +42,7 @@ class TarotCardPlugin(BasePlugin):
 
     def get_image_url(self, random_number):
         # 返回网络上的图片 URL
-        return f"http://127.0.0.1:8080/uploads/{random_number}.png"
+        return f"http://127.0.0.1:8000/uploads/{random_number}.png"
 
     def __del__(self):
         pass
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     server_thread = threading.Thread(target=run_server)
     server_thread.daemon = False  # 设置为守护线程
     server_thread.start()
-    print("Server is running at http://localhost:8080")
+    print("Server is running at http://localhost:8000")
 
     # 主程序继续执行其他任务
     print("Main program is running...")
