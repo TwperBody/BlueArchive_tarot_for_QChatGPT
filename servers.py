@@ -39,7 +39,7 @@ def uploaded_file(filename):
     try:
         return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'], filename)
     except FileNotFoundError:
-        return f"File {filename} not found", 404
+        return f"File {filename} not found at {app.config['UPLOADED_PHOTOS_DEST']}", 404
 
 def run_server():
     try:
