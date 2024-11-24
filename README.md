@@ -1,5 +1,5 @@
 # 
-
+由于规范更改以及测试性质，已被弃用
 ## 安装
 
 配置完成 [QChatGPT](https://github.com/RockChinQ/QChatGPT) 主程序后使用管理员账号向机器人发送命令即可安装：
